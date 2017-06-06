@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,17 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -38,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "DEBUGSCHEISSE";
     BluetoothLeScanner mBluetoothLeScanner;
     Timer mTimer = new Timer();
-
+    HttpURLConnection PostConn;
 
 
 
@@ -49,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
         BTAdapter = BluetoothAdapter.getDefaultAdapter();
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-
-
         wv = (WebView) findViewById(R.id.WebView);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setDomStorageEnabled(true);
@@ -58,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         wv.getSettings().setUseWideViewPort(true);
         wv.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         wv.setWebViewClient(new WebViewClient());
+
 
 
 
@@ -95,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     JSInterface.senddevice(CreateJson("WLAN",WMACS,WSignal));
                     WMACS.clear();
                     WSignal.clear();
+
                     mWifiManager.startScan();
                 }
             }, filter);
@@ -153,7 +165,21 @@ public class MainActivity extends AppCompatActivity {
         {
             mBluetoothLeScanner.startScan(null, mScanSettings, mScanCallback);
             mWifiManager.startScan();
-            mTimer.schedule(mTimerTask, 400, 400);
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+
+                    mBluetoothLeScanner.stopScan(mScanCallback);
+                    mBluetoothLeScanner.startScan(null, mScanSettings, mScanCallback);
+                }
+            }, 400, 400);
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    DownloadWebPageTask task = new DownloadWebPageTask();
+                    task.execute();
+                }
+            }, 1000, 1000);
             Log.i(TAG, "AUFGERUFEN");
         }
 
@@ -162,6 +188,37 @@ public class MainActivity extends AppCompatActivity {
            mBluetoothLeScanner.stopScan(mScanCallback);
         }
     }
+    private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            try {
+                URL url = new URL("http://httpbin.org/post");
+                URLConnection conn = url.openConnection();
+                conn.setReadTimeout(1500);
+                conn.setConnectTimeout(1500);
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                wr.write("TEST");
+                wr.flush();
+
+                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    Log.i(TAG, line);
+                }
+                wr.close();
+                rd.close();
+            } catch (Exception e) {
+                Log.i(TAG, e.toString());
+            }
+            return "Fertig";
+        }
+    @Override
+    protected void onPostExecute(String result) {
+        Log.i(TAG,"ASYNCFERTIG");
+    }
+}
     public String CreateJson(String Type, List<String> MACS,List<Integer> Signal ){
         String JsonOut="[";
         String tmpstring;
@@ -178,19 +235,5 @@ public class MainActivity extends AppCompatActivity {
         JsonOut = JsonOut +"]";
         return JsonOut;
     }
-    TimerTask mTimerTask = new TimerTask() {
 
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    mBluetoothLeScanner.stopScan(mScanCallback);
-                    mBluetoothLeScanner.startScan(null, mScanSettings, mScanCallback);
-                }
-
-            });
-        }
-    };
 }
