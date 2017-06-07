@@ -21,14 +21,8 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -47,12 +41,14 @@ public class MainActivity extends AppCompatActivity {
     WifiManager mWifiManager;
     BluetoothAdapter BTAdapter;
     ScanSettings mScanSettings;
-    String TAG = "DEBUGSCHEISSE";
+    String TAG = "DEBUGGING";
     BluetoothLeScanner mBluetoothLeScanner;
     Timer mTimer = new Timer();
     HttpURLConnection PostConn;
-
-
+    List<String> WMACS=new ArrayList<String>();
+    List<Integer> WSignal = new ArrayList<Integer>();
+    boolean createdTimerTask=false;
+    String DataOut="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,21 +85,15 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    List<String> WMACS=new ArrayList<String>();
-                    List<Integer> WSignal = new ArrayList<Integer>();
+
                     List<android.net.wifi.ScanResult> results = mWifiManager.getScanResults();
                     final int N = results.size();
                     for (int i = 0; i < N; ++i) {
-                       /* Log.i(TAG, "  BSSID       =" + results.get(i).BSSID);
-                        Log.i(TAG, "  SSID        =" + results.get(i).SSID);
-                        Log.i(TAG, "  Capabilities=" + results.get(i).capabilities);
-                        Log.i(TAG, "  Frequency   =" + results.get(i).frequency);
-                        Log.i(TAG, "  Level       =" + results.get(i).level);
-                        Log.i(TAG, "---------------");*/
                         WMACS.add(results.get(i).BSSID);
                         WSignal.add(results.get(i).level);
                     }
                     JSInterface.senddevice(CreateJson("WLAN",WMACS,WSignal));
+                    Aggregate("WLAN",WMACS,WSignal);
                     WMACS.clear();
                     WSignal.clear();
 
@@ -120,11 +110,12 @@ public class MainActivity extends AppCompatActivity {
             List<Integer> BTSignal = new ArrayList<Integer>();
             ScanRecord mScanRecord = result.getScanRecord();
             BluetoothDevice device = result.getDevice();
-            Log.i(TAG,device.getAddress());
-            Log.i(TAG,device.getName());
+         //   Log.i(TAG,device.getAddress());
+          //  Log.i(TAG,device.getName());
             BTMACS.add(device.getAddress());
             BTSignal.add(result.getRssi());
             JSInterface.senddevice(CreateJson("BT",BTMACS,BTSignal));
+            Aggregate("BT",BTMACS,BTSignal);
             BTMACS.clear();
             BTSignal.clear();
             Log.i(TAG, "BLEAUFGERUFEN");
@@ -173,13 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     mBluetoothLeScanner.startScan(null, mScanSettings, mScanCallback);
                 }
             }, 400, 400);
-            mTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    DownloadWebPageTask task = new DownloadWebPageTask();
-                    task.execute();
-                }
-            }, 1000, 1000);
+
             Log.i(TAG, "AUFGERUFEN");
         }
 
@@ -190,20 +175,23 @@ public class MainActivity extends AppCompatActivity {
     }
     private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
         @Override
-        protected String doInBackground(String... urls) {
+        protected String doInBackground(String... DataToSend) {
+            String line = "";
             try {
-                URL url = new URL("http://httpbin.org/post");
+                URL url = new URL("http://api.medunigraz.at:8088/v1/geo/positioning/");
                 URLConnection conn = url.openConnection();
                 conn.setReadTimeout(1500);
                 conn.setConnectTimeout(1500);
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
                 conn.setDoOutput(true);
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-                wr.write("TEST");
+                wr.write(DataToSend[0]);
                 wr.flush();
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String line;
+
                 while ((line = rd.readLine()) != null) {
                     Log.i(TAG, line);
                 }
@@ -212,21 +200,36 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.i(TAG, e.toString());
             }
-            return "Fertig";
+            return line;
         }
     @Override
     protected void onPostExecute(String result) {
         Log.i(TAG,"ASYNCFERTIG");
     }
 }
+    private void Aggregate(String Type, List<String> MACS,List<Integer> Signal){
+
+        DataOut= CreateJson(Type,MACS,Signal);
+
+        if (!createdTimerTask) {
+            createdTimerTask = true;
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    DownloadWebPageTask task = new DownloadWebPageTask();
+                    task.execute(DataOut);
+                }
+            }, 1000, 1000);
+        }
+    }
     public String CreateJson(String Type, List<String> MACS,List<Integer> Signal ){
         String JsonOut="[";
         String tmpstring;
-        Log.i(TAG,MACS.toString());
-        Log.i(TAG,Signal.toString());
+        //Log.i(TAG,MACS.toString());
+      //  Log.i(TAG,Signal.toString());
         for (int i = 0; i < MACS.size(); i++) {
             tmpstring = String.format("{\"Type\":\"%s\",\"ID\":\"%s\",\"Value\":%d},",Type,MACS.get(i),Signal.get(i));
-            Log.i("CreateJson",tmpstring);
+         //   Log.i("CreateJson",tmpstring);
             JsonOut = JsonOut + tmpstring;
         }
         StringBuilder sb = new StringBuilder(JsonOut);
