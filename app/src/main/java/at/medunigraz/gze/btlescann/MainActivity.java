@@ -24,7 +24,6 @@ import android.webkit.WebViewClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -43,12 +42,10 @@ public class MainActivity extends AppCompatActivity {
     ScanSettings mScanSettings;
     String TAG = "DEBUGGING";
     BluetoothLeScanner mBluetoothLeScanner;
-    Timer mTimer = new Timer();
-    HttpURLConnection PostConn;
-    List<String> WMACS=new ArrayList<String>();
-    List<Integer> WSignal = new ArrayList<Integer>();
+    Timer mTimer;
     boolean createdTimerTask=false;
     String DataOut="";
+    String DataIn="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         wv.addJavascriptInterface(JSInterface, "JSInterface");
         wv.loadUrl("https://api.medunigraz.at/postest/");
         BTAdapter.enable();
-        Log.i(TAG, "GLADN");
+        Log.i(TAG, "Geladen");
         mBluetoothLeScanner = BTAdapter.getBluetoothLeScanner();
         ScanSettings.Builder mBuilder = new ScanSettings.Builder();
         mBuilder.setReportDelay(0);
@@ -85,14 +82,14 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-
+                    List<String> WMACS=new ArrayList<String>();
+                    List<Integer> WSignal = new ArrayList<Integer>();
                     List<android.net.wifi.ScanResult> results = mWifiManager.getScanResults();
                     final int N = results.size();
                     for (int i = 0; i < N; ++i) {
                         WMACS.add(results.get(i).BSSID);
                         WSignal.add(results.get(i).level);
                     }
-                    JSInterface.senddevice(CreateJson("WLAN",WMACS,WSignal));
                     Aggregate("WLAN",WMACS,WSignal);
                     WMACS.clear();
                     WSignal.clear();
@@ -103,21 +100,25 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    protected void onStop() {
+        mTimer = null;
+        super.onStop();
+    }
+    protected void onDestroy() {
+        super.onDestroy();
+    }
     protected ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             List<String> BTMACS=new ArrayList<String>();
             List<Integer> BTSignal = new ArrayList<Integer>();
-            ScanRecord mScanRecord = result.getScanRecord();
             BluetoothDevice device = result.getDevice();
 
             BTMACS.add(device.getAddress());
             BTSignal.add(result.getRssi());
-            JSInterface.senddevice(CreateJson("BT",BTMACS,BTSignal));
             Aggregate("BT",BTMACS,BTSignal);
             BTMACS.clear();
             BTSignal.clear();
-            Log.i(TAG, "BLEAUFGERUFEN");
         }
     };
     public class JavaScriptInterface {
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         {
             mBluetoothLeScanner.startScan(null, mScanSettings, mScanCallback);
             mWifiManager.startScan();
+            mTimer = new Timer();
             mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -170,9 +172,13 @@ public class MainActivity extends AppCompatActivity {
         @JavascriptInterface
         public void StopLocate() {
            mBluetoothLeScanner.stopScan(mScanCallback);
+            createdTimerTask = false;
+            mTimer.cancel();
+            mTimer = null;
+            DataIn = DataOut = "";
         }
     }
-    private class DownloadWebPageTask extends AsyncTask<String, Void, String> {
+    private class PostDataToServer extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... DataToSend) {
             String line = "";
@@ -201,6 +207,8 @@ public class MainActivity extends AppCompatActivity {
                 while ((line = rd.readLine()) != null) {
                     Log.i(TAG, "ANTWORT:");
                     Log.i(TAG, line);
+                    DataIn = line;
+
                 }
                 wr.close();
                 rd.close();
@@ -223,9 +231,10 @@ public class MainActivity extends AppCompatActivity {
             mTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    DownloadWebPageTask task = new DownloadWebPageTask();
+                    PostDataToServer task = new PostDataToServer();
                     task.execute(DataOut);
                     DataOut = "";
+                    JSInterface.senddevice(DataIn);
                 }
             }, 1000, 1000);
         }
