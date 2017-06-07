@@ -110,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
             List<Integer> BTSignal = new ArrayList<Integer>();
             ScanRecord mScanRecord = result.getScanRecord();
             BluetoothDevice device = result.getDevice();
-         //   Log.i(TAG,device.getAddress());
-          //  Log.i(TAG,device.getName());
+
             BTMACS.add(device.getAddress());
             BTSignal.add(result.getRssi());
             JSInterface.senddevice(CreateJson("BT",BTMACS,BTSignal));
@@ -185,14 +184,22 @@ public class MainActivity extends AppCompatActivity {
                 conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
                 conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
                 conn.setDoOutput(true);
+                String JsonOut="[";
+                JsonOut = JsonOut + DataToSend[0];
+                StringBuilder sb = new StringBuilder(JsonOut);
+                sb.setLength(Math.max(sb.length() - 1, 0));
+                JsonOut = sb.toString();
+                JsonOut = JsonOut +"]";
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-                wr.write(DataToSend[0]);
+                Log.i(TAG, "GESENDET:");
+                Log.i(TAG, JsonOut);
+                wr.write(JsonOut);
                 wr.flush();
 
                 BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                 while ((line = rd.readLine()) != null) {
+                    Log.i(TAG, "ANTWORT:");
                     Log.i(TAG, line);
                 }
                 wr.close();
@@ -209,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
 }
     private void Aggregate(String Type, List<String> MACS,List<Integer> Signal){
 
-        DataOut= CreateJson(Type,MACS,Signal);
+        DataOut= DataOut + CreateJson(Type,MACS,Signal);
 
         if (!createdTimerTask) {
             createdTimerTask = true;
@@ -218,24 +225,16 @@ public class MainActivity extends AppCompatActivity {
                 public void run() {
                     DownloadWebPageTask task = new DownloadWebPageTask();
                     task.execute(DataOut);
+                    DataOut = "";
                 }
             }, 1000, 1000);
         }
     }
     public String CreateJson(String Type, List<String> MACS,List<Integer> Signal ){
-        String JsonOut="[";
-        String tmpstring;
-        //Log.i(TAG,MACS.toString());
-      //  Log.i(TAG,Signal.toString());
+        String JsonOut="";
         for (int i = 0; i < MACS.size(); i++) {
-            tmpstring = String.format("{\"Type\":\"%s\",\"ID\":\"%s\",\"Value\":%d},",Type,MACS.get(i),Signal.get(i));
-         //   Log.i("CreateJson",tmpstring);
-            JsonOut = JsonOut + tmpstring;
+            JsonOut = JsonOut + String.format("{\"Type\":\"%s\",\"ID\":\"%s\",\"Value\":%d},",Type,MACS.get(i),Signal.get(i));
         }
-        StringBuilder sb = new StringBuilder(JsonOut);
-        sb.setLength(Math.max(sb.length() - 1, 0));
-        JsonOut = sb.toString();
-        JsonOut = JsonOut +"]";
         return JsonOut;
     }
 
