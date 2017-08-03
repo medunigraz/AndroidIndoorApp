@@ -1,4 +1,4 @@
-package at.medunigraz.gze.btlescann;
+package medunigraz.meduni;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("at.medunigraz.gze.btlescann", appContext.getPackageName());
+        assertEquals("medunigraz.meduni", appContext.getPackageName());
     }
 }

@@ -1,4 +1,4 @@
-package at.medunigraz.gze.btlescann;
+package medunigraz.meduni;
 
 import org.junit.Test;
 
