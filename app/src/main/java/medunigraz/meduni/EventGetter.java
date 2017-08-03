@@ -1,6 +1,8 @@
 package medunigraz.meduni;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,12 +20,15 @@ import java.util.List;
 
 public class EventGetter {
     URL Link;
+    private int Errorstate;
+    private static Context context;
     final List<String> TitelListe = new ArrayList<>();
     final List<String> LinkListe=new ArrayList<>();
     final List<String> DatumListe=new ArrayList<>();
     final List<String> TeaserListe=new ArrayList<>();
-    public EventGetter(String url)
+    public EventGetter(String url, Context c)
     {
+        context = c;
         try {
             Link = new URL(url);
         }catch (Exception e)
@@ -51,6 +56,10 @@ public class EventGetter {
         return DatumListe;
 
     }
+    public int getErrorState()
+    {
+        return Errorstate;
+    }
     public void FetchInfos()
     {
         try {
@@ -59,6 +68,7 @@ public class EventGetter {
             BufferedReader reader = null;
             urlConnection = (HttpURLConnection) Link.openConnection();
             urlConnection.setRequestMethod("GET");
+            urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -85,9 +95,11 @@ public class EventGetter {
                 TeaserListe.add(c.getString("teaser"));
                 DatumListe.add(c.getString("start").split("T")[0]);
             }
+            Errorstate = 0;
         }catch (Exception e)
         {
-            Log.i("DEBUG",e.toString());
+            Log.i("DEBUG",e.getMessage());
+            Errorstate = 1;
         }
     }
 }

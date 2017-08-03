@@ -1,6 +1,8 @@
 package medunigraz.meduni;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,11 +19,14 @@ import java.util.List;
 
 public class NewsGetter {
     URL Link;
+    private static Context context;
+    private int Errorstate;
     final List<String> TitelListe = new ArrayList<>();
     final List<String> DatumListe=new ArrayList<>();
     final List<String> TeaserListe=new ArrayList<>();
-    public NewsGetter(String url)
+    public NewsGetter(String url, Context c)
     {
+        this.context = c;
         try {
             Link = new URL(url);
         }catch (Exception e)
@@ -44,6 +49,10 @@ public class NewsGetter {
         return DatumListe;
 
     }
+    public int getErrorState()
+    {
+        return Errorstate;
+    }
     public void FetchInfos()
     {
         try {
@@ -52,6 +61,7 @@ public class NewsGetter {
             BufferedReader reader;
             urlConnection = (HttpURLConnection) Link.openConnection();
             urlConnection.setRequestMethod("GET");
+            urlConnection.setConnectTimeout(1000);
             urlConnection.connect();
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
@@ -76,9 +86,10 @@ public class NewsGetter {
                 TeaserListe.add(c.getString("teaser"));
                 DatumListe.add(c.getString("datetime").split("T")[0]);
             }
+            Errorstate = 0;
         }catch (Exception e)
         {
-            Log.i("DEBUG",e.toString());
+            Errorstate = 1;
         }
     }
 }

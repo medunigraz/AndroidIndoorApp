@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +48,16 @@ public class NewsList extends Fragment {
         }
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            TitelListe.addAll(NewsGetter.getTitles());
-            TeaserListe.addAll(NewsGetter.getTeaser());
-            DatumListe.addAll(NewsGetter.getDatum());
-            adapter.notifyDataSetChanged();
+            if(NewsGetter.getErrorState()>0)
+            {
+                Toast.makeText(getContext(), "Kein Internet!",
+                        Toast.LENGTH_LONG).show();
+            }else {
+                TitelListe.addAll(NewsGetter.getTitles());
+                TeaserListe.addAll(NewsGetter.getTeaser());
+                DatumListe.addAll(NewsGetter.getDatum());
+                adapter.notifyDataSetChanged();
+            }
         }
     }
     @Override
@@ -59,7 +66,7 @@ public class NewsList extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
         listView = (ListView) view.findViewById(R.id.NewsListView);
-        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset),getContext());
         adapter = new EventAdapter(getActivity(),TitelListe,TeaserListe,DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
@@ -72,11 +79,8 @@ public class NewsList extends Fragment {
                         listView.getFooterViewsCount()) >= (adapter.getCount() - 1)) {
                         offset = offset +10;
                         lastseen=listView.getLastVisiblePosition();
-                        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+                        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset),getContext());
                         new GetList().execute();
-
-
-
                 }
             }
 

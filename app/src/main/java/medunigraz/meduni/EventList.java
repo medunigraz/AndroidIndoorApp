@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class EventList extends Fragment {
             }
         });
 
-        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/");
+        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/",getContext());
         adapter = new EventAdapter(getActivity(),EventGetter.TitelListe,EventGetter.TeaserListe,EventGetter.DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
@@ -74,7 +75,13 @@ public class EventList extends Fragment {
         }
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            adapter.notifyDataSetChanged();
+            if(EventGetter.getErrorState()>0)
+            {
+                Toast.makeText(getContext(), "Kein Internet!",
+                        Toast.LENGTH_LONG).show();
+            }else {
+                adapter.notifyDataSetChanged();
+            }
 
         }
     }
