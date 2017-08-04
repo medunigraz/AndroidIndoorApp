@@ -21,13 +21,14 @@ public class NewsList extends Fragment {
     NewsGetter NewsGetter;
     EventAdapter adapter;
     ListView listView;
-    int offset = 0, lastseen= 0;
+    int offset = 0, lastseen = 0;
     List<String> TitelListe = new ArrayList<>();
-    List<String> TeaserListe=new ArrayList<>();
-    List<String> DatumListe=new ArrayList<>();
+    List<String> TeaserListe = new ArrayList<>();
+    List<String> DatumListe = new ArrayList<>();
 
     public NewsList() {
     }
+
     public static NewsList newInstance() {
         NewsList fragment = new NewsList();
         return fragment;
@@ -38,21 +39,19 @@ public class NewsList extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
-    class GetList extends AsyncTask<Void, Integer, String>
-    {
-        protected String doInBackground(Void...arg0) {
-            Log.d("DEBUG" + " DoINBackGround","On doInBackground...");
 
+    class GetList extends AsyncTask<Void, Integer, String> {
+        protected String doInBackground(Void... arg0) {
             NewsGetter.FetchInfos();
-            return "You are at PostExecute";
+            return "Fertig";
         }
+
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(NewsGetter.getErrorState()>0)
-            {
+            if (NewsGetter.getErrorState() > 0) {
                 Toast.makeText(getContext(), "Kein Internet!",
                         Toast.LENGTH_LONG).show();
-            }else {
+            } else {
                 TitelListe.addAll(NewsGetter.getTitles());
                 TeaserListe.addAll(NewsGetter.getTeaser());
                 DatumListe.addAll(NewsGetter.getDatum());
@@ -60,14 +59,15 @@ public class NewsList extends Fragment {
             }
         }
     }
+
     @Override
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
         listView = (ListView) view.findViewById(R.id.NewsListView);
-        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset),getContext());
-        adapter = new EventAdapter(getActivity(),TitelListe,TeaserListe,DatumListe);
+        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+        adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -77,10 +77,10 @@ public class NewsList extends Fragment {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
                         && (listView.getLastVisiblePosition() - listView.getHeaderViewsCount() -
                         listView.getFooterViewsCount()) >= (adapter.getCount() - 1)) {
-                        offset = offset +10;
-                        lastseen=listView.getLastVisiblePosition();
-                        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset),getContext());
-                        new GetList().execute();
+                    offset = offset + 10;
+                    lastseen = listView.getLastVisiblePosition();
+                    NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+                    new GetList().execute();
                 }
             }
 
@@ -91,8 +91,6 @@ public class NewsList extends Fragment {
         });
         return view;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
 
     @Override
     public void onAttach(Context context) {

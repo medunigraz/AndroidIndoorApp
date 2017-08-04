@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +60,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         FragmentManager manager = getSupportFragmentManager();
         if (id == R.id.nav_Map) {
-            manager.beginTransaction().replace(R.id.content,  MapFragment.newInstance()).commit();
+            manager.beginTransaction().replace(R.id.content, MapFragment.newInstance()).commit();
         } else if (id == R.id.nav_News) {
-            manager.beginTransaction().replace(R.id.content,  NewsList.newInstance()).commit();
+            manager.beginTransaction().replace(R.id.content, NewsList.newInstance()).commit();
         } else if (id == R.id.nav_Events) {
-            manager.beginTransaction().replace(R.id.content,  EventList.newInstance()).commit();
-        }else if (id == R.id.nav_Impressum) {
-            manager.beginTransaction().replace(R.id.content,  Impressum.newInstance()).commit();
+            manager.beginTransaction().replace(R.id.content, EventList.newInstance()).commit();
+        } else if (id == R.id.nav_Impressum) {
+            manager.beginTransaction().replace(R.id.content, Impressum.newInstance()).commit();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

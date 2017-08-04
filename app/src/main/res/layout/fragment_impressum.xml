@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="medunigraz.meduni.Impressum"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:context="medunigraz.meduni.Impressum">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -13,6 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="0"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="3dp"
         android:layout_row="1"
         android:text="Medieninhaberin, Herausgeberin, inhaltliche und redaktionelle Verantwortung"
         android:textColor="@android:color/holo_green_dark"
@@ -22,12 +24,15 @@
         android:id="@+id/Inhaber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medizinische Universität Graz\n Auenbruggerplatz 2\n 8036 Graz \nrektor(at)medunigraz.at\n www.medunigraz.at" />
+        android:layout_marginLeft="3dp"
+        android:text="Medizinische Universität Graz\nAuenbruggerplatz 2\n8036 Graz\nrektor(at)medunigraz.at\nwww.medunigraz.at" />
 
     <TextView
         android:id="@+id/Rechtsform"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="3dp"
         android:text="Rechtsform und Information"
         android:textColor="@android:color/holo_green_dark"
         android:textStyle="bold" />
@@ -36,12 +41,15 @@
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
         android:text="Juristische Person öffentlichen Rechts gemäß § 4 Universitätsgesetz 2002 (UG 2002), BGBl. I Nr. 120/2002 \nidgF.\nDVR: 210 9494, UID: ATU 575 111 79" />
 
     <TextView
         android:id="@+id/DEsign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="3dp"
         android:text="Design und Umsetzung"
         android:textColor="@android:color/holo_green_dark"
         android:textStyle="bold" />
@@ -50,6 +58,7 @@
         android:id="@+id/textView12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
         android:text="Praktikanten der OE für Informationstechnologie" />
 
 </LinearLayout>

@@ -17,51 +17,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class EventGetter {
     URL Link;
     private int Errorstate;
-    private static Context context;
-    final List<String> TitelListe = new ArrayList<>();
-    final List<String> LinkListe=new ArrayList<>();
-    final List<String> DatumListe=new ArrayList<>();
-    final List<String> TeaserListe=new ArrayList<>();
-    public EventGetter(String url, Context c)
-    {
-        context = c;
+    private final List<String> TitelListe = new ArrayList<>();
+    private final List<String> LinkListe = new ArrayList<>();
+    private final List<String> DatumListe = new ArrayList<>();
+    private final List<String> TeaserListe = new ArrayList<>();
+
+    public EventGetter(String url) {
         try {
             Link = new URL(url);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
-    public List<String> getTitles()
-    {
+
+    public List<String> getTitles() {
         return TitelListe;
 
     }
-    public List<String> getLinks()
-    {
+
+    public List<String> getLinks() {
         return LinkListe;
 
     }
-    public List<String> getTeaser()
-    {
+
+    public List<String> getTeaser() {
         return TeaserListe;
 
     }
-    public List<String> getDatum()
-    {
+
+    public List<String> getDatum() {
         return DatumListe;
 
     }
-    public int getErrorState()
-    {
+
+    public int getErrorState() {
         return Errorstate;
     }
-    public void FetchInfos()
-    {
+
+    public void FetchInfos() {
         try {
 
             HttpURLConnection urlConnection = null;
@@ -96,9 +92,8 @@ public class EventGetter {
                 DatumListe.add(c.getString("start").split("T")[0]);
             }
             Errorstate = 0;
-        }catch (Exception e)
-        {
-            Log.i("DEBUG",e.getMessage());
+        } catch (Exception e) {
+            Log.i("DEBUG", e.getMessage());
             Errorstate = 1;
         }
     }

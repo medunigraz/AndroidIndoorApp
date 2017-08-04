@@ -2,9 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+        <item android:title="Links">
+            <menu>
         <item
             android:id="@+id/nav_News"
-            android:icon="@drawable/ic_news_sw"
+            android:icon="@drawable/ic_news_world_sw"
             android:title="News" />
         <item
             android:id="@+id/nav_Events"
@@ -14,12 +16,15 @@
             android:id="@+id/nav_Map"
             android:icon="@drawable/ic_map_sw"
             android:title="Map" />
+            </menu>
+        </item>
+
     </group>
     <item android:title="About Us">
         <menu>
             <item
                 android:id="@+id/nav_Impressum"
-                android:icon="@drawable/ic_info_black_24dp"
+                android:icon="@drawable/ic_impressum_sw"
                 android:title="About Us" />
         </menu>
     </item>

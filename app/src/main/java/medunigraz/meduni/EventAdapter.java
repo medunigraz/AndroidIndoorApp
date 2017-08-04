@@ -10,22 +10,22 @@ import android.widget.TextView;
 import java.util.List;
 
 
-
 public class EventAdapter extends ArrayAdapter<String> {
-    List<String> Titel, Teaser,Datum;
+    List<String> Titel, Teaser, Datum;
     Activity Context;
-    public EventAdapter(Activity Context,List<String> Titel, List<String> Teaser,List<String> Datum) {
+
+    public EventAdapter(Activity Context, List<String> Titel, List<String> Teaser, List<String> Datum) {
         super(Context, R.layout.event_list_item, Titel);
         this.Titel = Titel;
         this.Context = Context;
         this.Teaser = Teaser;
         this.Datum = Datum;
     }
+
     @Override
-    public View getView(int Position, View view, ViewGroup parent)
-    {
+    public View getView(int Position, View view, ViewGroup parent) {
         LayoutInflater inflater = Context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.event_list_item, null, true);
+        View rowView = inflater.inflate(R.layout.event_list_item, null, true);
         TextView txtTitle = (TextView) rowView.findViewById(R.id.Titel);
         TextView txtTeaser = (TextView) rowView.findViewById(R.id.Teaser);
         TextView txtDatum = (TextView) rowView.findViewById(R.id.Datum);

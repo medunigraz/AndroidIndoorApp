@@ -19,10 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class EventList extends Fragment {
     EventGetter EventGetter;
     EventAdapter adapter;
+
+    List<String> TitelListe = new ArrayList<>();
+    List<String> TeaserListe = new ArrayList<>();
+    List<String> DatumListe = new ArrayList<>();
+    List<String> LinkListe = new ArrayList<>();
 
     public EventList() {
     }
@@ -41,17 +45,16 @@ public class EventList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final List<String> LinkListe=new ArrayList<>();
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
         final ListView listView = (ListView) view.findViewById(R.id.EventListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("DEBUG",listView.getItemAtPosition(position).toString());
-                Log.i("DEBUG",EventGetter.LinkListe.get(position).toString());
-                if (!EventGetter.LinkListe.get(position).toString().isEmpty()) {
-                    String url = EventGetter.LinkListe.get(position).toString();
-                    if (!url.startsWith("https://") && !url.startsWith("http://")){
+                Log.i("DEBUG", listView.getItemAtPosition(position).toString());
+                Log.i("DEBUG", LinkListe.get(position).toString());
+                if (!LinkListe.get(position).toString().isEmpty()) {
+                    String url = LinkListe.get(position).toString();
+                    if (!url.startsWith("https://") && !url.startsWith("http://")) {
                         url = "http://" + url;
                     }
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -59,32 +62,35 @@ public class EventList extends Fragment {
             }
         });
 
-        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/",getContext());
-        adapter = new EventAdapter(getActivity(),EventGetter.TitelListe,EventGetter.TeaserListe,EventGetter.DatumListe);
+        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/");
+        adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
         return view;
     }
-    class GetList extends AsyncTask<Void, Integer, String>
-    {
-        protected String doInBackground(Void...arg0) {
-            Log.d("DEBUG" + " DoINBackGround","On doInBackground...");
-            EventGetter.FetchInfos();
 
-            return "You are at PostExecute";
+    class GetList extends AsyncTask<Void, Integer, String> {
+        protected String doInBackground(Void... arg0) {
+            EventGetter.FetchInfos();
+            return "Fertig";
         }
+
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(EventGetter.getErrorState()>0)
-            {
+            if (EventGetter.getErrorState() > 0) {
                 Toast.makeText(getContext(), "Kein Internet!",
                         Toast.LENGTH_LONG).show();
-            }else {
+            } else {
+                TitelListe.addAll(EventGetter.getTitles());
+                TeaserListe.addAll(EventGetter.getTeaser());
+                DatumListe.addAll(EventGetter.getDatum());
+                LinkListe.addAll(EventGetter.getLinks());
                 adapter.notifyDataSetChanged();
             }
 
         }
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

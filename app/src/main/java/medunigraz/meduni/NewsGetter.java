@@ -16,45 +16,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class NewsGetter {
     URL Link;
-    private static Context context;
     private int Errorstate;
-    final List<String> TitelListe = new ArrayList<>();
-    final List<String> DatumListe=new ArrayList<>();
-    final List<String> TeaserListe=new ArrayList<>();
-    public NewsGetter(String url, Context c)
-    {
-        this.context = c;
+    private final List<String> TitelListe = new ArrayList<>();
+    private final List<String> DatumListe = new ArrayList<>();
+    private final List<String> TeaserListe = new ArrayList<>();
+
+    public NewsGetter(String url) {
         try {
             Link = new URL(url);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
-    public List<String> getTitles()
-    {
+
+    public List<String> getTitles() {
         return TitelListe;
 
     }
-    public List<String> getTeaser()
-    {
+
+    public List<String> getTeaser() {
         return TeaserListe;
 
     }
-    public List<String> getDatum()
-    {
+
+    public List<String> getDatum() {
         return DatumListe;
 
     }
-    public int getErrorState()
-    {
+
+    public int getErrorState() {
         return Errorstate;
     }
-    public void FetchInfos()
-    {
+
+    public void FetchInfos() {
         try {
 
             HttpURLConnection urlConnection;
@@ -87,8 +83,7 @@ public class NewsGetter {
                 DatumListe.add(c.getString("datetime").split("T")[0]);
             }
             Errorstate = 0;
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             Errorstate = 1;
         }
     }

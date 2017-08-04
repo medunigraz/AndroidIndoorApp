@@ -1,4 +1,5 @@
 package medunigraz.meduni;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -18,12 +19,13 @@ import android.webkit.WebViewClient;
 public class MapFragment extends Fragment {
     boolean PositionPermission = false;
     public KontaktBTScanner BeaconScanner;
-    String Url="https://map.medunigraz.at/";
+    String Url = "https://map.medunigraz.at/map-dev/";
     WebView wv;
     JavaScriptInterface JSInterface;
 
     public MapFragment() {
     }
+
     public static MapFragment newInstance() {
         MapFragment fragment = new MapFragment();
         return fragment;
@@ -46,11 +48,13 @@ public class MapFragment extends Fragment {
             @Override
             public void onResultConverted(String JSONString) {
 
-                Log.i("DEBUG","GEFUNDEN");
-                wv.loadUrl("javascript:updatesignals('"+JSONString+"');");
+                Log.i("DEBUG", "GEFUNDEN");
+                wv.loadUrl("javascript:updatesignals('" + JSONString + "');");
             }
         });
-        if(Build.VERSION.SDK_INT < 24){ BeaconScanner.SetTimerInterval(400);}
+        if (Build.VERSION.SDK_INT < 24) {
+            BeaconScanner.SetTimerInterval(400);
+        }
         wv = (WebView) view.findViewById(R.id.WebView);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setDomStorageEnabled(true);
@@ -60,22 +64,24 @@ public class MapFragment extends Fragment {
         wv.setWebViewClient(new WebViewClient());
         JSInterface = new JavaScriptInterface(BeaconScanner);
         wv.addJavascriptInterface(JSInterface, "JSInterface");
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     128);
-        }else {PositionPermission = true;}
+        } else {
+            PositionPermission = true;
+        }
 
-        if(PositionPermission) {
+        if (PositionPermission) {
             BeaconScanner.SetNoPermission(false);
-        }else{
+        } else {
             BeaconScanner.SetNoPermission(true);
         }
 
         wv.loadUrl(Url);
         return view;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.i("DEBUG", Integer.toString(requestCode));
@@ -94,6 +100,7 @@ public class MapFragment extends Fragment {
             }
         }
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -102,11 +109,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if(BeaconScanner.KontaktIsScanning) {
-            BeaconScanner.StopScan();
-        }
-        BeaconScanner.UnregisterBTStatusReceiver();
-
+        BeaconScanner.UnloadBeaconScanner();
     }
 
 }
