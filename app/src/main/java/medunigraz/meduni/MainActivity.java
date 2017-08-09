@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    FragmentManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,8 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
+        manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.content, OpenerFragment.newInstance()).commit();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
@@ -58,15 +60,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        FragmentManager manager = getSupportFragmentManager();
+
         if (id == R.id.nav_Map) {
             manager.beginTransaction().replace(R.id.content, MapFragment.newInstance()).commit();
+            getSupportActionBar().setTitle("Map");
         } else if (id == R.id.nav_News) {
             manager.beginTransaction().replace(R.id.content, NewsList.newInstance()).commit();
+            getSupportActionBar().setTitle("News");
         } else if (id == R.id.nav_Events) {
             manager.beginTransaction().replace(R.id.content, EventList.newInstance()).commit();
+            getSupportActionBar().setTitle("Events");
         } else if (id == R.id.nav_Impressum) {
             manager.beginTransaction().replace(R.id.content, Impressum.newInstance()).commit();
+            getSupportActionBar().setTitle("Impressum");
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

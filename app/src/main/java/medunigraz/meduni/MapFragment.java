@@ -3,6 +3,7 @@ package medunigraz.meduni;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -19,7 +21,7 @@ import android.webkit.WebViewClient;
 public class MapFragment extends Fragment {
     boolean PositionPermission = false;
     public KontaktBTScanner BeaconScanner;
-    String Url = "https://map.medunigraz.at/map-dev/";
+    String Url = "https://map.medunigraz.at/";
     WebView wv;
     JavaScriptInterface JSInterface;
 
@@ -62,6 +64,7 @@ public class MapFragment extends Fragment {
         wv.getSettings().setUseWideViewPort(true);
         wv.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         wv.setWebViewClient(new WebViewClient());
+        //wv.setWebViewClient(new WebViewClient() {@Override public void onReceivedSslError(WebView v, SslErrorHandler handler, SslError er){ Log.i("DEBUG",Integer.toString(er.getPrimaryError()));handler.proceed(); }});
         JSInterface = new JavaScriptInterface(BeaconScanner);
         wv.addJavascriptInterface(JSInterface, "JSInterface");
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -109,6 +112,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        wv.destroy();
         BeaconScanner.UnloadBeaconScanner();
     }
 
