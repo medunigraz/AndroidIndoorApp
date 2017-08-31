@@ -20,6 +20,7 @@ import android.webkit.WebViewClient;
 
 public class MapFragment extends Fragment {
     boolean PositionPermission = false;
+    boolean wasScanning = false;
     public KontaktBTScanner BeaconScanner;
     String Url = "https://map.medunigraz.at/";
     WebView wv;
@@ -64,8 +65,7 @@ public class MapFragment extends Fragment {
         wv.getSettings().setUseWideViewPort(true);
         wv.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         wv.setWebViewClient(new WebViewClient());
-        //wv.setWebViewClient(new WebViewClient() {@Override public void onReceivedSslError(WebView v, SslErrorHandler handler, SslError er){ Log.i("DEBUG",Integer.toString(er.getPrimaryError()));handler.proceed(); }});
-        JSInterface = new JavaScriptInterface(BeaconScanner);
+        JSInterface = new JavaScriptInterface(getContext(), BeaconScanner);
         wv.addJavascriptInterface(JSInterface, "JSInterface");
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
@@ -115,5 +115,29 @@ public class MapFragment extends Fragment {
         wv.destroy();
         BeaconScanner.UnloadBeaconScanner();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        wv.onPause();
+        if (BeaconScanner.KontaktIsScanning) {
+            BeaconScanner.StopScan();
+            wasScanning = true;
+
+        }
+        Log.i("DEBUG", "Pause");
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        wv.onResume();
+        if (wasScanning) {
+            BeaconScanner.StartScan();
+            wasScanning = true;
+        }
+        Log.i("DEBUG", "Resume");
+    }
+
+
 
 }

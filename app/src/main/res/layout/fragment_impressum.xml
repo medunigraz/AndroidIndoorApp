@@ -59,6 +59,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
-        android:text="Praktikanten der OE für Informationstechnologie" />
+        android:text="Medizinische Universität Graz, OE für Informationstechnologie" />
 
 </LinearLayout>

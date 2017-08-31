@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ import java.util.List;
 public class EventList extends Fragment {
     EventGetter EventGetter;
     EventAdapter adapter;
-
+    int offset = 0, lastseen = 0;
     List<String> TitelListe = new ArrayList<>();
     List<String> TeaserListe = new ArrayList<>();
     List<String> DatumListe = new ArrayList<>();
@@ -61,8 +62,26 @@ public class EventList extends Fragment {
                 }
             }
         });
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
-        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/");
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                        && (listView.getLastVisiblePosition() - listView.getHeaderViewsCount() -
+                        listView.getFooterViewsCount()) >= (adapter.getCount() - 1)) {
+                    offset = offset + 10;
+                    lastseen = listView.getLastVisiblePosition();
+                    EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + Integer.toString(offset));
+                    new GetList().execute();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
+        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + Integer.toString(offset));
         adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();

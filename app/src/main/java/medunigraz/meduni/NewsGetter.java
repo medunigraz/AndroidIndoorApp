@@ -21,6 +21,7 @@ public class NewsGetter {
     private int Errorstate;
     private final List<String> TitelListe = new ArrayList<>();
     private final List<String> DatumListe = new ArrayList<>();
+    private final List<String> LinkListe = new ArrayList<>();
     private final List<String> TeaserListe = new ArrayList<>();
 
     public NewsGetter(String url) {
@@ -33,6 +34,10 @@ public class NewsGetter {
 
     public List<String> getTitles() {
         return TitelListe;
+
+    }
+    public List<String> getLinks() {
+        return LinkListe;
 
     }
 
@@ -81,6 +86,8 @@ public class NewsGetter {
                 TitelListe.add(c.getString("title"));
                 TeaserListe.add(c.getString("teaser"));
                 DatumListe.add(c.getString("datetime").split("T")[0]);
+                LinkListe.add("http://www.medunigraz.at/");
+                //LinkListe.add(c.getString("url"));
             }
             Errorstate = 0;
         } catch (Exception e) {

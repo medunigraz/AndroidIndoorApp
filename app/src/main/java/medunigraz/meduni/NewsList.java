@@ -2,6 +2,8 @@ package medunigraz.meduni;
 
 import android.content.Context;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ public class NewsList extends Fragment {
     List<String> TitelListe = new ArrayList<>();
     List<String> TeaserListe = new ArrayList<>();
     List<String> DatumListe = new ArrayList<>();
+    List<String> LinkListe = new ArrayList<>();
 
     public NewsList() {
     }
@@ -55,13 +59,13 @@ public class NewsList extends Fragment {
                 TitelListe.addAll(NewsGetter.getTitles());
                 TeaserListe.addAll(NewsGetter.getTeaser());
                 DatumListe.addAll(NewsGetter.getDatum());
+                LinkListe.addAll(NewsGetter.getLinks());
                 adapter.notifyDataSetChanged();
             }
         }
     }
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
@@ -70,6 +74,19 @@ public class NewsList extends Fragment {
         adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("DEBUG", "Clicklistener aufgerufen");
+                if (!LinkListe.get(position).toString().isEmpty()|| LinkListe.get(position) !=null) {
+                    String url = LinkListe.get(position).toString();
+                    if (!url.startsWith("https://") && !url.startsWith("http://")) {
+                        url = "http://" + url;
+                    }
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
+            }
+        });
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
