@@ -1,3 +1,7 @@
+<ScrollView android:id="@+id/ScrollV"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -25,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
-        android:text="Medizinische Universität Graz\nAuenbruggerplatz 2\n8036 Graz\nrektor(at)medunigraz.at\nwww.medunigraz.at" />
+        android:text="Medizinische Universität Graz\nAuenbruggerplatz 2\n8036 Graz\nrektor@medunigraz.at\nwww.medunigraz.at" />
 
     <TextView
         android:id="@+id/Rechtsform"
@@ -38,11 +42,13 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/RechtsformTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
-        android:text="Juristische Person öffentlichen Rechts gemäß § 4 Universitätsgesetz 2002 (UG 2002), BGBl. I Nr. 120/2002 \nidgF.\nDVR: 210 9494, UID: ATU 575 111 79" />
+        android:textStyle="italic"
+        android:text="Rechtsform und Information\nJuristische Person öffentlichen Rechts gemäß § 4 Universitätsgesetz 2002 (UG 2002), BGBl. I Nr. 120/2002 idgF.\nDVR: 210 9494, UID: ATU 575 111 79" />
+
 
     <TextView
         android:id="@+id/DEsign"
@@ -61,4 +67,57 @@
         android:layout_marginLeft="3dp"
         android:text="Medizinische Universität Graz, OE für Informationstechnologie" />
 
+
+    <TextView
+    android:id="@+id/Copyright"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="4dp"
+    android:layout_marginLeft="3dp"
+    android:text="Copyright"
+    android:textColor="@android:color/holo_green_dark"
+    android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/CopyrightTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:text="© Das Copyright liegt bei der Medizinischen Universität Graz." />
+
+    <TextView
+        android:id="@+id/Haftung"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="3dp"
+        android:text="Haftung"
+        android:textColor="@android:color/holo_green_dark"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/HaftungTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:text="Sämtliche Texte der App der Medizinischen Universität Graz wurden sorgfältig geprüft. Dessen ungeachtet kann keine Garantie für die Richtigkeit, Vollständigkeit und Aktualität der Angaben bzw. Inhalte, weder selbst formulierte noch zitierte, noch für allfällige Schäden, die aus der Verwendung der Informationen resultieren könnten, übernommen werden. Eine Haftung der Medizinischen Universität Graz wird daher ausgeschlossen.\nDie Medizinische Universität Graz behält es sich vor, die Inhalte jederzeit zu ändern, zu ergänzen, ganz oder teilweise zu löschen. Für allenfalls daraus resultierende Konsequenzen übernimmt die Medizinische Universität Graz keinerlei Verantwortung.\nDie Links zu externen Webseiten wurden sorgfältig ausgewählt. Da die Medizinische Universität Graz keinerlei Kontrolle über und auch keinen Einfluss auf die Inhalte dieser externen Webseiten hat, übernimmt die Medizinische Universität Graz für den Inhalt von solchen verlinkten Webseiten sowie für deren Aktualität, Richtigkeit, Vollständigkeit sowie Gesetzeskonformität keine Verantwortung." />
+
+    <TextView
+        android:id="@+id/Aufsicht"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="3dp"
+        android:text="Aufsichtsbehörde der Medizinischen Universität Graz"
+        android:textColor="@android:color/holo_green_dark"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/AufsichtTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:text="Bundesministerium für Wissenschaft, Forschung und Wirtschaft (bmwfw)" />
+
 </LinearLayout>
+</ScrollView>

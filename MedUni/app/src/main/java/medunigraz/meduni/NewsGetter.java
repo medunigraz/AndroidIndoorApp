@@ -86,8 +86,8 @@ public class NewsGetter {
                 TitelListe.add(c.getString("title"));
                 TeaserListe.add(c.getString("teaser"));
                 DatumListe.add(c.getString("datetime").split("T")[0]);
-                LinkListe.add("http://www.medunigraz.at/");
-                //LinkListe.add(c.getString("url"));
+                //LinkListe.add("http://www.medunigraz.at/");
+                LinkListe.add(c.getString("url"));
             }
             Errorstate = 0;
         } catch (Exception e) {
