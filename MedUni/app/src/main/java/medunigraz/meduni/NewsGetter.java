@@ -1,9 +1,5 @@
 package medunigraz.meduni;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,12 +13,12 @@ import java.util.List;
 
 
 public class NewsGetter {
-    URL Link;
-    private int Errorstate;
     private final List<String> TitelListe = new ArrayList<>();
     private final List<String> DatumListe = new ArrayList<>();
     private final List<String> LinkListe = new ArrayList<>();
     private final List<String> TeaserListe = new ArrayList<>();
+    URL Link;
+    private int Errorstate;
 
     public NewsGetter(String url) {
         try {
@@ -36,6 +32,7 @@ public class NewsGetter {
         return TitelListe;
 
     }
+
     public List<String> getLinks() {
         return LinkListe;
 

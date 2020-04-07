@@ -3,7 +3,6 @@ package medunigraz.meduni;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,16 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 
 public class MapFragment extends Fragment {
+    public KontaktBTScanner BeaconScanner;
     boolean PositionPermission = false;
     boolean wasScanning = false;
-    public KontaktBTScanner BeaconScanner;
     String Url = "https://map.medunigraz.at/";
     WebView wv;
     JavaScriptInterface JSInterface;
@@ -58,7 +56,7 @@ public class MapFragment extends Fragment {
         if (Build.VERSION.SDK_INT < 24) {
             BeaconScanner.SetTimerInterval(400);
         }
-        wv = (WebView) view.findViewById(R.id.WebView);
+        wv = view.findViewById(R.id.WebView);
         wv.getSettings().setJavaScriptEnabled(true);
         wv.getSettings().setDomStorageEnabled(true);
         wv.getSettings().setLoadWithOverviewMode(true);
@@ -86,7 +84,7 @@ public class MapFragment extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.i("DEBUG", Integer.toString(requestCode));
         switch (requestCode) {
             case 128: {
@@ -127,6 +125,7 @@ public class MapFragment extends Fragment {
         }
         Log.i("DEBUG", "Pause");
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -137,7 +136,6 @@ public class MapFragment extends Fragment {
         }
         Log.i("DEBUG", "Resume");
     }
-
 
 
 }

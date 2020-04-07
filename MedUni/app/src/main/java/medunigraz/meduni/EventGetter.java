@@ -1,8 +1,6 @@
 package medunigraz.meduni;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,18 +10,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class EventGetter {
-    URL Link;
-    private int Errorstate;
     private final List<String> TitelListe = new ArrayList<>();
     private final List<String> LinkListe = new ArrayList<>();
     private final List<String> DatumListe = new ArrayList<>();
     private final List<String> TeaserListe = new ArrayList<>();
+    URL Link;
+    private int Errorstate;
 
     public EventGetter(String url) {
         try {

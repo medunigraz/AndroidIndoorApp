@@ -1,7 +1,6 @@
 package medunigraz.meduni;
 
 import android.content.Context;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,33 +43,12 @@ public class NewsList extends Fragment {
 
     }
 
-    class GetList extends AsyncTask<Void, Integer, String> {
-        protected String doInBackground(Void... arg0) {
-            NewsGetter.FetchInfos();
-            return "Fertig";
-        }
-
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (NewsGetter.getErrorState() > 0) {
-                Toast.makeText(getContext(), "Kein Internet!",
-                        Toast.LENGTH_LONG).show();
-            } else {
-                TitelListe.addAll(NewsGetter.getTitles());
-                TeaserListe.addAll(NewsGetter.getTeaser());
-                DatumListe.addAll(NewsGetter.getDatum());
-                LinkListe.addAll(NewsGetter.getLinks());
-                adapter.notifyDataSetChanged();
-            }
-        }
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_list, container, false);
-        listView = (ListView) view.findViewById(R.id.NewsListView);
-        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+        listView = view.findViewById(R.id.NewsListView);
+        NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + offset);
         adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
@@ -78,8 +56,8 @@ public class NewsList extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i("DEBUG", "Clicklistener aufgerufen");
-                if (!LinkListe.get(position).toString().isEmpty()|| LinkListe.get(position) !=null) {
-                    String url = LinkListe.get(position).toString();
+                if (!LinkListe.get(position).isEmpty() || LinkListe.get(position) != null) {
+                    String url = LinkListe.get(position);
                     if (!url.startsWith("https://") && !url.startsWith("http://")) {
                         url = "http://" + url;
                     }
@@ -96,7 +74,7 @@ public class NewsList extends Fragment {
                         listView.getFooterViewsCount()) >= (adapter.getCount() - 1)) {
                     offset = offset + 10;
                     lastseen = listView.getLastVisiblePosition();
-                    NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + Integer.toString(offset));
+                    NewsGetter = new NewsGetter("https://api.medunigraz.at/v1/typo3/news/?limit=20&offset=" + offset);
                     new GetList().execute();
                 }
             }
@@ -118,6 +96,27 @@ public class NewsList extends Fragment {
     public void onDetach() {
         super.onDetach();
 
+    }
+
+    class GetList extends AsyncTask<Void, Integer, String> {
+        protected String doInBackground(Void... arg0) {
+            NewsGetter.FetchInfos();
+            return "Fertig";
+        }
+
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (NewsGetter.getErrorState() > 0) {
+                Toast.makeText(getContext(), "Kein Internet!",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                TitelListe.addAll(NewsGetter.getTitles());
+                TeaserListe.addAll(NewsGetter.getTeaser());
+                DatumListe.addAll(NewsGetter.getDatum());
+                LinkListe.addAll(NewsGetter.getLinks());
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
 

@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-
 public class OpenerFragment extends Fragment {
-
 
 
     public OpenerFragment() {

@@ -26,9 +26,9 @@ public class EventAdapter extends ArrayAdapter<String> {
     public View getView(int Position, View view, ViewGroup parent) {
         LayoutInflater inflater = Context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.event_list_item, null, true);
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.Titel);
-        TextView txtTeaser = (TextView) rowView.findViewById(R.id.Teaser);
-        TextView txtDatum = (TextView) rowView.findViewById(R.id.Datum);
+        TextView txtTitle = rowView.findViewById(R.id.Titel);
+        TextView txtTeaser = rowView.findViewById(R.id.Teaser);
+        TextView txtDatum = rowView.findViewById(R.id.Datum);
         txtTitle.setText(Titel.get(Position));
         txtTeaser.setText(Teaser.get(Position));
         txtDatum.setText(Datum.get(Position));

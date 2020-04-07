@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 
@@ -47,14 +46,14 @@ public class EventList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
-        final ListView listView = (ListView) view.findViewById(R.id.EventListView);
+        final ListView listView = view.findViewById(R.id.EventListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i("DEBUG", listView.getItemAtPosition(position).toString());
-                Log.i("DEBUG", LinkListe.get(position).toString());
-                if (!LinkListe.get(position).toString().isEmpty()) {
-                    String url = LinkListe.get(position).toString();
+                Log.i("DEBUG", LinkListe.get(position));
+                if (!LinkListe.get(position).isEmpty()) {
+                    String url = LinkListe.get(position);
                     if (!url.startsWith("https://") && !url.startsWith("http://")) {
                         url = "http://" + url;
                     }
@@ -71,7 +70,7 @@ public class EventList extends Fragment {
                         listView.getFooterViewsCount()) >= (adapter.getCount() - 1)) {
                     offset = offset + 10;
                     lastseen = listView.getLastVisiblePosition();
-                    EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + Integer.toString(offset));
+                    EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + offset);
                     new GetList().execute();
                 }
             }
@@ -81,11 +80,23 @@ public class EventList extends Fragment {
 
             }
         });
-        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + Integer.toString(offset));
+        EventGetter = new EventGetter("https://api.medunigraz.at/v1/typo3/events/?limit=20&offset=" + offset);
         adapter = new EventAdapter(getActivity(), TitelListe, TeaserListe, DatumListe);
         listView.setAdapter(adapter);
         new GetList().execute();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
     }
 
     class GetList extends AsyncTask<Void, Integer, String> {
@@ -108,18 +119,6 @@ public class EventList extends Fragment {
             }
 
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
     }
 
 }
