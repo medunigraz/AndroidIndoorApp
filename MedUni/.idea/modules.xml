@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidIndoorApp-MedUni.iml" filepath="$PROJECT_DIR$/AndroidIndoorApp-MedUni.iml" group="MedUni" />
       <module fileurl="file://$PROJECT_DIR$/MedUni.iml" filepath="$PROJECT_DIR$/MedUni.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/MedUni-app.iml" filepath="$PROJECT_DIR$/app/MedUni-app.iml" group="MedUni/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
